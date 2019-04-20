@@ -1,0 +1,4 @@
+---
+# defaults file for tensorflow
+
+tensorflow_path: "{{ topdir }}/tensorflow"

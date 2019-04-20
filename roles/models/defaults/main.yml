@@ -1,0 +1,4 @@
+---
+# defaults file for models
+
+models_path: "{{ topdir }}/models"

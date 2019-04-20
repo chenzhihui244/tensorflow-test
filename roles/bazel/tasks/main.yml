@@ -1,0 +1,27 @@
+---
+# tasks file for bazel
+
+- name: make sure bazel dir present
+  file:
+    state: directory
+    name: "{{ bazel_path }}"
+
+- name: download bazel source
+  get_url:
+    url: "{{ bazel_url }}"
+    dest: "{{ bazel_path }}/{{ bazel_src_pkg }}"
+
+- name: install dependencies
+  yum:
+    state: latest
+    name: ['gcc', 'gcc-c++', 'zip', 'unzip', 'python-devel', 'patch']
+  when: (ansible_distribution == "CentOS")
+
+- name: install openjdk
+  yum:
+    state: present
+    name: ['java-11-openjdk.aarch64', 'java-11-openjdk-devel.aarch64', 'java-11-openjdk-headless.aarch64']
+  when: (ansible_distribution == "CentOS")
+
+- name: build bazel
+  script: build-bazel.sh "{{ bazel_path }}" "{{ bazel_src_pkg }}"

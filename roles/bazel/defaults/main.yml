@@ -1,0 +1,3 @@
+---
+# defaults file for bazel
+bazel_path: "{{ topdir }}/bazel"

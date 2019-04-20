@@ -1,0 +1,12 @@
+[all:vars]
+topdir=/home/tf
+bazel_url=https://github.com/bazelbuild/bazel/releases/download/0.21.0/bazel-0.21.0-dist.zip
+bazel_src_pkg=bazel-0.21.0-dist.zip
+
+tensorflow_git=https://github.com/tensorflow/tensorflow.git
+tensorflow_version=1.13.1
+
+models_git=https://github.com/tensorflow/models.git
+
+[target]
+192.168.1.134

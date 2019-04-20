@@ -1,0 +1,51 @@
+---
+# tasks file for tensorflow
+
+- name: ensure tensorflow path present
+  file:
+    state: directory
+    path: "{{ tensorflow_path }}"
+
+- name: install dependencies
+  yum:
+    state: latest
+    name: ['gcc', 'gcc-c++', 'zip', 'unzip', 'python-devel', 'patch', 'git', 'hdf5-devel', 'lapack-devel']
+  when: (ansible_distribution == "CentOS")
+
+- name: install openjdk
+  yum:
+    state: present
+    name: ['java-11-openjdk.aarch64', 'java-11-openjdk-devel.aarch64', 'java-11-openjdk-headless.aarch64']
+  when: (ansible_distribution == "CentOS")
+
+- name: install pip
+  script: build-pip.sh
+  args:
+    chdir: "{{ tensorflow_path }}"
+
+- name: get tensorflow source
+  git:
+    repo: "{{ tensorflow_git }}"
+    dest: "{{ tensorflow_path }}/tensorflow"
+    version: "v{{ tensorflow_version }}"
+    update: no
+
+- name: install python modules
+  pip:
+    state: present
+    name: ['numpy', 'enum34', 'keras', 'mock']
+
+- name: patch
+# https://github.com/freedomtan/tensorflow/commit/3f88ddb71ba49d343a5db1304c296e78ddeb2575
+  patch:
+    src: make-aws-sdk-work-on-aarch64.patch
+    basedir: "{{ tensorflow_path }}/tensorflow"
+    strip: 1
+
+- name: build tensorflow
+  script: build-tensorflow.sh "{{ tensorflow_path }}"
+
+- name: install tensorflow
+  pip:
+    state: present
+    name: "file:///tmp/tensorflow_pkg/tensorflow-{{ tensorflow_version }}-cp27-cp27mu-linux_aarch64.whl"

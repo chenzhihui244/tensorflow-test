@@ -1,0 +1,15 @@
+---
+# tasks file for models
+
+- name: ensure models directory present
+  file:
+    state: directory
+    path: "{{ models_path }}"
+
+- name: download models
+  git:
+    repo: "{{ models_git }}"
+    dest: "{{ models_path }}/models"
+
+- name: models test
+  script: models-test.sh "{{ models_path }}"
